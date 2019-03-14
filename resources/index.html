@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" >
+
+
+<link rel="stylesheet" href="bootstrap.css">
+  <script src="jquery.min.js"></script>
+  <script src="jquery.cycle.all.js"></script>
+  <script src="bootstrap.min.js"></script>
+  <style>
+  #source::-webkit-calendar-picker-indicator,#to::-webkit-calendar-picker-indicator {
+	display: none;
+}
+/* Hide the list on focus of the input field */
+datalist {
+	display: none;
+}
+#Adults::-webkit-inner-spin-button, 
+#Adults::-webkit-outer-spin-button,
+#YoungAdults::-webkit-inner-spin-button, 
+#YoungAdults::-webkit-outer-spin-button,
+#children::-webkit-inner-spin-button, 
+#children::-webkit-outer-spin-button,
+#infants::-webkit-inner-spin-button, 
+#infants::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+  </style>
+<meta charset="ISO-8859-1">
+<title>Home Page</title>
+</head>
+<body onload="myFunction()">    
+        	
+<div class="container" >
+  <hr>
+  <div class="row">
+  <div class="col-sm-12"  >
+  <div style="background-color: white;padding-left: 200px;padding-top: 10px; padding-bottom: 5px;border-radius: 25px; " >
+  <table style="padding-right: 20px;">
+  <tr>
+  <td><p>
+  From:</p>
+  <td><input name="fromsource" list="sources" id="source"/>
+<datalist id="sources" >
+</datalist></td>
+  </td>
+  <td style="width:175px;"><p id="return_date" style="display: none;">Return Date:</p></td>
+  </tr>
+  <tr>
+  <td><p>To:</p></td>
+  <td><input  list="sources_to"  id="to" />
+  <datalist id="sources_to" >
+</datalist></td><td><input type="button" value="submit"></td>
+  </tr></table></div></div></div>
+ 
+</div>
+<div class="container" >
+<hr>
+
+  </div>
+  <div class="container" style="text-align:center">
+<p style=" align:center"> Fare result</p>
+
+  </div>
+  
+  
+<script type="text/javascript">
+	var airportcode=[];
+
+	var fares=[];
+function myFunction(){
+	
+		
+		$.ajax({
+		     
+		     url: 'locations_en.json',
+		     type: 'GET',
+		     
+				async: false,
+				dataType: 'json',
+		     success: function(data){   
+		    	 for(var i=0;i< data.length;i++){    	 
+		         	airportcode.push(data[i].code);
+		       	 
+		       }
+		         
+		    
+		     }    
+		
+		  });
+		
+		createdatlist();
+		create_to_datlist();
+		
+}
+
+function myfunction(){
+	
+	
+	
+	$.getJSON("http://localhost:8082/airports",function(data){
+
+        //alert(data);
+       
+        
+        for(var i=0;i< data.length;i++){    	 
+        	airportcode.push(data[i].code);
+      	 
+      }
+        
+    alert(airportcode);
+	});
+	createdatlist();
+	create_to_datlist();
+}
+
+var str=''; // variable to store the options
+var str_to='';
+function createdatlist(){
+	
+	var month = airportcode;
+	for (var i=0; i < month.length;++i){
+		str +='<option value="'+month[i]+'">'+month[i]+'</option>';
+		
+	}
+	var my_list=document.getElementById("sources");
+	my_list.innerHTML = str;
+	create_to_datlist();
+}
+function create_to_datlist(){
+	
+	var month = airportcode;
+	for (var i=0; i < month.length;++i){
+		str_to +='<option value="'+month[i]+'">'+month[i]+'</option>';
+		
+	}
+	var my_list=document.getElementById("sources_to");
+	my_list.innerHTML = str_to;
+}
+///http://localhost:8082/airports 
+//fares/{origin}/{destination} 
+
+	function fetchfare(){
+		var source=document.getElementById('source').value;
+		var destination =document.getElementById('to').value;
+		url="http://localhost:8082/fares/"+source+"/"+destination;
+		$.getJSON(url ,function(data){
+
+	      
+	        
+	        for(var i=0;i< data.length;i++){    	 
+	        	fares.push(data[i].code);
+	      	 
+	      }
+	        
+	    
+		});
+		
+	}
+
+
+
+
+</script>
+</body>
+</html>
